@@ -1,0 +1,103 @@
+#!/usr/bin/with-contenv bash
+
+echo "============> Initializing setup"
+MAGENTO_INSTALL_STRING=${MAGENTO_INSTALL_STRING:-}
+MAGENTO_PATH=${MAGENTO_PATH:-/src}
+cd "$MAGENTO_PATH"
+
+# create project if empty
+if [[ -f "${MAGENTO_PATH}/app/etc/config.php" ]] || [[ -f "${MAGENTO_PATH}/app/etc/env.php" ]]; then
+    echo "============> Magento is already setup. Exiting setup."
+    exit
+fi
+
+if [[ ! -f "${MAGENTO_PATH}/composer.json" ]]; then
+    if [[ ! -z "${MAGENTO_VERSION}" ]]; then
+        echo "============> Installing version ${MAGENTO_VERSION}"
+        VERSION="=${MAGENTO_VERSION}"
+    else
+        echo "============> Installing latest version"
+        VERSION=""
+    fi
+
+    if [[ "${MAGENTO_CODEBASE}" = "ee" ]]; then
+        echo "============> Installing Enterprise via Composer"
+        /usr/local/bin/composer.phar create-project --no-interaction --repository-url=https://repo.magento.com/ magento/project-enterprise-edition$VERSION .
+    else
+        echo "============> Installing Community via Composer"
+        /usr/local/bin/composer.phar create-project --no-interaction --repository-url=https://repo.magento.com/ magento/project-community-edition$VERSION .
+    fi
+
+    if [[ ! -f "${MAGENTO_PATH}/composer.lock" ]]; then
+        echo "============> Installation failed! No Composer lock."
+        exit 1
+    fi
+
+    # Magento forces Composer to use $MAGENTO_ROOT/var/composer_home as the home directory
+    # when running any Composer commands through Magento, e.g. sampledata:deploy, so copy the
+    # credentials over to it to prevent Composer from asking for them again
+    mkdir -p "${MAGENTO_PATH}/var/composer_home"
+    cp "${COMPOSER_HOME}/auth.json" "${MAGENTO_PATH}/var/composer_home/auth.json"
+
+    echo "============> Fixing ownership"
+    chown -R ash:ash "${MAGENTO_PATH}"
+else
+    echo "============> Installing Composer dependencies"
+    /usr/local/bin/composer.phar install
+fi
+
+if [[ -f "${MAGENTO_PATH}/bin/magento" ]]; then
+    chmod +x bin/magento
+else
+    echo "============> Installation failed! No magento executable."
+    exit 1
+fi
+
+if [[ "${MAGENTO_USE_SAMPLE_DATA}" = true ]]; then
+    echo "============> Installing sample data dependencies"
+    /src/bin/magento sampledata:deploy
+    MAGENTO_INSTALL_STRING="${MAGENTO_INSTALL_STRING} --use-sample-data"
+fi
+
+if [[ ! -z "${MAGENTO_BACKEND_FRONTNAME}" ]]; then
+    MAGENTO_INSTALL_STRING="${MAGENTO_INSTALL_STRING} --backend-frontname=${MAGENTO_BACKEND_FRONTNAME}"
+fi
+
+if [[ ! -z "${MAGENTO_BASE_URL_SECURE}" ]]; then
+    MAGENTO_INSTALL_STRING="${MAGENTO_INSTALL_STRING} --base-url-secure=${MAGENTO_BASE_URL_SECURE} --use-secure=1 --use-secure-admin=1"
+fi
+
+if [[ "${MAGENTO_INSTALL_DB}" = true ]]; then
+    echo "============> Running Magento Installer Script"
+
+    /src/bin/magento setup:install \
+        --db-host=$MAGENTO_DB_HOST \
+        --db-name=$MAGENTO_DB_NAME \
+        --db-user=$MAGENTO_DB_USER \
+        --db-password=$MAGENTO_DB_PASSWORD \
+        --admin-firstname=$MAGENTO_ADMIN_FIRSTNAME \
+        --admin-lastname=$MAGENTO_ADMIN_LASTNAME \
+        --admin-email=$MAGENTO_ADMIN_EMAIL \
+        --admin-user=$MAGENTO_ADMIN_USER \
+        --admin-password=$MAGENTO_ADMIN_PASSWORD \
+        --base-url=$MAGENTO_BASE_URL \
+        --use-rewrites=$MAGENTO_REWRITES \
+        --language=$MAGENTO_LANGUAGE \
+        --currency=$MAGENTO_CURRENCY \
+        --timezone=$MAGENTO_TIMEZONE \
+        $MAGENTO_INSTALL_STRING
+
+    echo "============> Enabling developer mode"
+    /src/bin/magento deploy:mode:set developer
+
+    echo "============> Fixing permissions"
+    find "${MAGENTO_PATH}/pub" -type f -exec chmod 664 {} \;
+    find "${MAGENTO_PATH}/pub" -type d -exec chmod 775 {} \;
+    if [[ -d "${MAGENTO_PATH}/var/generation" ]]; then
+        find "${MAGENTO_PATH}/var/generation" -type d -exec chmod g+s {} \;
+    fi
+else
+    echo "============> Skipping database install"
+fi
+
+echo "============> Installation complete"

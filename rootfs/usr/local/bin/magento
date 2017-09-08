@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+
+[ "$DEBUG" = "true" ] && set -x
+
+if [[ ! -f /src/bin/magento ]]; then
+    echo "============> Magento source does not exist"
+    exit
+else
+    exec \
+        s6-setuidgid ash \
+        /src/bin/magento "$@"
+fi

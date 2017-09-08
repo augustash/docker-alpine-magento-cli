@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+
+[ "$DEBUG" = "true" ] && set -x
+
+exec \
+    s6-setuidgid ash \
+    /usr/lib/node_modules/gulp/bin/gulp.js "$@"
