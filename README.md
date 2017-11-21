@@ -6,7 +6,8 @@
 
 ## Versions
 
-- `1.0.0`, `latest` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.0/Dockerfile)
+- `1.0.1`, `latest` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.1/Dockerfile)
+- `1.0.0` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.0/Dockerfile)
 
 [See VERSIONS.md for image contents.](https://github.com/augustash/docker-alpine-magento-cli/blob/master/VERSIONS.md)
 
@@ -53,7 +54,7 @@ The following variables can be set and will change how the container behaves. Yo
 - `MAGENTO_CODEBASE`=cc
 - `MAGENTO_USE_SAMPLE_DATA`=false
 - `MAGENTO_INSTALL_DB`=false
-- `MAGENTO_BASE_URL`=http://m2.dev/
+- `MAGENTO_BASE_URL`=http://magento.dev/
 - `MAGENTO_DB_HOST`=mysql
 - `MAGENTO_DB_NAME`=magento2
 - `MAGENTO_DB_USER`=user
@@ -104,7 +105,6 @@ When this image is used as part of a Magento 2 cluster, the following commands c
 ```bash
 docker-compose run --rm magento-cli magento deploy:mode:set developer
 docker-compose run --rm magento-cli magento dev:urn-catalog:generate .idea/misc.xml
-
 docker-compose run --rm magento-cli magento setup:upgrade
 docker-compose run --rm magento-cli magento setup:static-content:deploy
 docker-compose run --rm magento-cli magento cache:flush

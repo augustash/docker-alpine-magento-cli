@@ -3,7 +3,7 @@ services:
   alpine-magento-cli:
     build:
       context: .
-    image: augustash/alpine-magento-cli:latest
+    image: augustash/alpine-magento-cli
     labels:
       - "com.augustash.description=August Ash Alpine Magento CLI Image"
       - "com.augustash.development-only"
@@ -13,16 +13,16 @@ services:
         soft: 64000
         hard: 64000
     depends_on:
-      - db
+      - mysql
     volumes:
       - ~/.composer:/.composer
     env_file: magento.env
     environment:
-      - MAGENTO_VERSION=2.2.0
+      - MAGENTO_VERSION=2.2.1
       - MAGENTO_INSTALL_DB=true
       - MAGENTO_USE_SAMPLE_DATA=true
-      - MAGENTO_BASE_URL=http://m2.dev/
+      - MAGENTO_BASE_URL=http://magento.dev/
 
-  db:
+  mysql:
     image: percona:5.7
     env_file: database.env
