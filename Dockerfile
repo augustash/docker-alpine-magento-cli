@@ -1,4 +1,4 @@
-FROM augustash/alpine-phpfpm:1.0.0
+FROM augustash/alpine-phpfpm:1.0.1
 
 # environment
 ENV DEBUG false
@@ -10,16 +10,13 @@ ENV MAGENTO_INSTALL_DB false
 
 # packages & configure
 RUN apk-install git mysql-client nodejs sudo && \
-    mkdir -p /var/log/cron && \
     /usr/bin/npm install -g gulp grunt && \
+    mkdir -p /var/log/cron && \
     apk-cleanup
 
 # copy root filesystem
 COPY rootfs /
 RUN  chmod +x /usr/local/bin/*
-
-# external
-VOLUME ["/var/log/cron"]
 
 # run s6 supervisor
 ENTRYPOINT ["/init"]
