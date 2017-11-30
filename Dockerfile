@@ -1,4 +1,4 @@
-FROM augustash/alpine-phpfpm:1.0.1
+FROM augustash/alpine-phpfpm:1.0.2
 
 # environment
 ENV DEBUG false
