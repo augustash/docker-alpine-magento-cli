@@ -6,7 +6,8 @@
 
 ## Versions
 
-- `1.0.2`, `latest` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.2/Dockerfile)
+- `1.0.3`, `latest` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.3/Dockerfile)
+- `1.0.2` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.2/Dockerfile)
 - `1.0.1` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.1/Dockerfile)
 - `1.0.0` [(Dockerfile)](https://github.com/augustash/docker-alpine-magento-cli/blob/1.0.0/Dockerfile)
 
@@ -107,8 +108,9 @@ When this image is used as part of a Magento 2 cluster, the following commands c
 docker-compose run --rm magento-cli magento deploy:mode:set developer
 docker-compose run --rm magento-cli magento dev:urn-catalog:generate .idea/misc.xml
 docker-compose run --rm magento-cli magento setup:upgrade
+docker-compose run --rm magento-cli magento setup:di:compile
 docker-compose run --rm magento-cli magento setup:static-content:deploy
-docker-compose run --rm magento-cli magento cache:flush
+docker-compose run --rm magento-cli magento cache:clean
 ```
 
 ## Inspiration

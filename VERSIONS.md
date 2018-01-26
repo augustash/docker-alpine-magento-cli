@@ -4,9 +4,22 @@ This file contains all software versions used within a version of the image itse
 
 ## Latest
 
-Same as v1.0.2.
+Same as v1.0.3.
 
 Usage: `augustash/alpine-magento-cli` or `augustash/alpine-magento-cli:latest`.
+
+## v1.0.3
+
+- [augustash/alpine-phpfpm](https://github.com/augustash/docker-alpine-phpfpm): v1.0.2
+- [php](http://www.php.net/): v7.0.21
+
+*Improvements:*
+
+- Updates script permissions.
+- Updates documentation.
+- Changes default installed Magento version.
+
+Usage: `augustash/alpine-magento-cli:1.0.3`.
 
 ## v1.0.2
 
