@@ -21,10 +21,10 @@ if [[ ! -f "${MAGENTO_PATH}/composer.json" ]]; then
     fi
 
     if [[ "${MAGENTO_CODEBASE}" = "ee" ]]; then
-        echo "============> Installing Enterprise via Composer"
+        echo "============> Installing Magento Commerce via Composer"
         /usr/local/bin/composer.phar create-project --no-interaction --repository-url=https://repo.magento.com/ magento/project-enterprise-edition$VERSION .
     else
-        echo "============> Installing Community via Composer"
+        echo "============> Installing Magento Open Source via Composer"
         /usr/local/bin/composer.phar create-project --no-interaction --repository-url=https://repo.magento.com/ magento/project-community-edition$VERSION .
     fi
 
@@ -49,7 +49,7 @@ fi
 if [[ -f "${MAGENTO_PATH}/bin/magento" ]]; then
     chmod +x bin/magento
 else
-    echo "============> Installation failed! No magento executable."
+    echo "============> Installation failed! No 'magento' executable."
     exit 1
 fi
 
@@ -68,7 +68,7 @@ if [[ ! -z "${MAGENTO_BASE_URL_SECURE}" ]]; then
 fi
 
 if [[ "${MAGENTO_INSTALL_DB}" = true ]]; then
-    echo "============> Running Magento Installer Script"
+    echo "============> Running Magento installer script"
 
     /src/bin/magento setup:install \
         --db-host=$MAGENTO_DB_HOST \
@@ -99,5 +99,8 @@ if [[ "${MAGENTO_INSTALL_DB}" = true ]]; then
 else
     echo "============> Skipping database install"
 fi
+
+echo "============> Generate PHPStorm metadata"
+/src/bin/magento dev:urn-catalog:generate .idea/misc.xml
 
 echo "============> Installation complete"

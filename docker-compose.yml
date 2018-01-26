@@ -18,7 +18,7 @@ services:
       - ~/.composer:/.composer
     env_file: magento.env
     environment:
-      - MAGENTO_VERSION=2.2.1
+      - MAGENTO_VERSION=2.2.2
       - MAGENTO_INSTALL_DB=true
       - MAGENTO_USE_SAMPLE_DATA=true
       - MAGENTO_BASE_URL=http://magento.dev/
